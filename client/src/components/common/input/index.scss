@@ -1,0 +1,28 @@
+.customInputWrapper {
+  border-radius: 50rpx;
+  background: #f7fafe;
+  border: 1px solid #e8eaf1;
+  height: 50rpx;
+  line-height: 50rpx;
+  padding: 16rpx;
+  position: relative;
+  color: #adb6bd;
+  width: 500rpx;
+}
+
+.customInputTitle {
+  position: absolute;
+  top: -60rpx;
+  left: 0rpx;
+}
+
+.customInput {
+  color: #3b4b5b;
+  display:flex;
+  align-items:center;
+  padding-left: 16rpx;
+}
+
+.customPicker {
+  width: 100%;
+}

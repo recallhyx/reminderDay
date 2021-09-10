@@ -1,0 +1,159 @@
+.editWrapper {
+  display: flex;
+  align-items: center;
+  height: 100vh;
+  flex-direction: column;
+}
+
+.editTitle {
+  margin-top: 200rpx;
+  font-weight: bold;
+  font-size: 50rpx;
+  width: 532rpx;
+}
+
+.editInput {
+  margin-top: 100rpx;
+}
+
+.editSwitchWrapper {
+  margin-top: 50rpx;
+  width: 532rpx;
+}
+
+.editSwitch {
+  width: 300rpx;
+}
+
+.switchBox {
+  position: relative;
+}
+.switchBox text {
+  position: absolute;
+  color: #B7B8BB;
+  font-size: 30rpx;
+  line-height: 82rpx;
+  top: 0;
+}
+
+.switch {
+  width: 100%;
+  height: 82rpx;
+  background-color: #f7fafe;
+  border-radius: 50rpx;
+  border: 1px solid #e8eaf1;
+  position: relative;
+}
+.switch::before {
+  display: block;
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 9999rpx;
+  background: #f7fafe;
+  transition: all 0.35s cubic-bezier(0.45, 1, 0.4, 1);
+}
+
+
+.switchChecked::before {
+  transform: scale(0);
+}
+
+.switch view {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 150rpx;
+  height: 82rpx;
+  border-radius: 50rpx;
+  background: #fff;
+  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.4);
+  transition: all 0.35s cubic-bezier(0.45, 1, 0.4, 1);
+}
+
+.switchChecked view {
+  left: 100%;
+  transform: translateX(-100%);
+}
+
+.switchFalseText {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 150rpx;
+  height: 82rpx;
+  display: flex;
+  justify-content: center;
+  transition: all 0.35s cubic-bezier(0.45, 1, 0.4, 1);
+}
+
+.switchTrueText {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 150rpx;
+  height: 82rpx;
+  display: flex;
+  justify-content: center;
+  transition: all 0.35s cubic-bezier(0.45, 1, 0.4, 1);
+}
+
+.switchTrueText.highlight {
+  color: #000;
+}
+
+.switchFalseText.highlight {
+  color: #000;
+}
+
+.editTagGroup {
+  margin-top: 50rpx;
+  width: 532rpx;
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.editTag {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  color: #adb6bd;
+  font-size: 30rpx;
+  transition: all 0.35s cubic-bezier(0.45, 1, 0.4, 1);
+}
+
+.edtiTagSelected {
+  transform: scale(1.1);
+  color: #000;
+}
+
+.editOperation {
+  margin-top: 100rpx;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+
+.editConfirm {
+  font-weight: bold;
+  color: #f7fafe;
+  border-radius: 50rpx;
+  width: 532px;
+  transition: all 0.35s cubic-bezier(0.45, 1, 0.4, 1);
+}
+
+.editConfirm::after {
+  border: none;
+}
+
+.editCancel {
+  margin-top: 20rpx;
+  width: 100%;
+  text-align: center;
+  text-decoration: underline;
+}
