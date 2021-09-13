@@ -10,6 +10,15 @@ exports.main = async (event, context) => {
   const { day, title, isTop, type, tag, createTime, } = event;
   const wxContext = cloud.getWXContext();
   try {
+    if (isTop) {
+      await db.collection('anniversary').
+        where({_openid: wxContext.OPENID}).
+        update({
+          data: {
+            isTop: false,
+          }
+        })
+    }
     await db.collection('anniversary').add({
       // data 字段表示需新增的 JSON 数据
       data: { day, title, isTop, type, tag, createTime, _openid: wxContext.OPENID},

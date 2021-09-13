@@ -1,6 +1,5 @@
 import React, { Component, useCallback } from 'react'
-import Taro, { Config } from '@tarojs/taro'
-import { View, Text } from '@tarojs/components'
+import Taro from '@tarojs/taro'
 import './index.scss'
 import EditDay from '../../components/editDay/index.weapp'
 import { EDayTag, EDayType, ICreateDay } from '../../../types/type'
@@ -16,10 +15,11 @@ const newData = {
 
 export default function CreateDay() {
   const create = useCallback(async (data:ICreateDay) => {
+    console.log(data);
     try {
       Taro.showLoading({
         title: '创建中',
-      })
+      })  
       const res = await Taro.cloud.callFunction({
         name: 'createDay',
         data: {
@@ -38,6 +38,7 @@ export default function CreateDay() {
       console.log(error)
     }
   }, []);
+
   return (
     <EditDay
       type={EDayType.CREATE}

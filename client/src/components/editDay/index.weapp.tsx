@@ -18,21 +18,15 @@ type Props = {
   onClick: (data: ICreateDay) => {},
 }
 
-const CREATE_DAY = '创建纪念日'
-const EDIT_DAY = '修改纪念日'
+const CREATE_DAY = '创建日子'
+const EDIT_DAY = '修改日子'
 const TOP = '置顶'
 const NOT_TOP = '不置顶'
 
-const TagBackgroundColor = {
-  [EDayTag.BIRTHDAY]: `background: linear-gradient(-40deg, #acb6e5, #86fde8);`,
-  [EDayTag.LOVE]: `background: linear-gradient(322deg, #ff2049, #ff7763, #ffaf7f, #ffe29d)`,
-  [EDayTag.WORK]: `background: linear-gradient(338deg, #1900a7, #3c57c5, #409be2, #00e1fe)`
-}
-
 const ICON_GROUP = [
-  {icon: birthday, backgroundColor: '#fa8c16', text: '生日', tag: EDayTag.BIRTHDAY},
-  {icon: love, backgroundColor: '#eb2f96', text: '纪念日', tag: EDayTag.LOVE},
-  {icon: work, backgroundColor: '#1890ff', text: '工作', tag: EDayTag.WORK},
+  {icon: birthday, background: 'linear-gradient(347deg, #ff5530, #fe8041, #f9a353, #f2c466)', buttonColor: '#f9a353', text: '生日', tag: EDayTag.BIRTHDAY},
+  {icon: love, background: 'linear-gradient(-20deg, #ff0844 0%, #ffb199 100%);', buttonColor: '#ff0844', text: '纪念日', tag: EDayTag.LOVE},
+  {icon: work, background: 'linear-gradient(348deg, #0027f3, #3d62f8, #4995fc, #3ec7ff)', buttonColor: '#3d62f8', text: '工作', tag: EDayTag.WORK},
 ]
 
 export default function EditDay(props:Props) {
@@ -44,11 +38,11 @@ export default function EditDay(props:Props) {
 
   useEffect(() => {
     const item = ICON_GROUP.find((value) => value.tag === tag);
-    setButtonColor(item?.backgroundColor);
+    setButtonColor(item?.buttonColor);
   }, [tag])
 
   const onChange = (name, event, value?) => {
-    console.log('enter', name);
+    console.log('enter', name, value);
     if (name === 'day') {
       setEditData({
         ...editData,
@@ -101,16 +95,17 @@ export default function EditDay(props:Props) {
               className={`editTag ${tag === item.tag ? 'edtiTagSelected' : ''}`}
               onClick={() => onChange('tag', null, item.tag)}
             >
-              <Icon src={item.icon} backgroundColor={item.backgroundColor}/>
+              <Icon src={item.icon} background={item.background}/>
               <Text>{item.text}</Text>
             </View>
           ))
         }
       </View>
-      <View className="editOperation">
+      <View className="editOperation" style={{transition: `all 0.5s cubic-bezier(0.45, 1, 0.4, 1)`}}>
         <Button
-          style={{backgroundColor: buttonColor}}
-          className="editConfirm" onClick={onConfirm}>{type === EDayType.CREATE ? '创建' : '确定' }</Button>
+          className="editConfirm" 
+          style={{background: buttonColor}}
+          onClick={onConfirm}>{type === EDayType.CREATE ? '创建' : '确定' }</Button>
         <Text className="editCancel" onClick={() => Taro.navigateBack()}>取消</Text>
       </View>
     </View>

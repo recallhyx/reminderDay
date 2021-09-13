@@ -5,9 +5,9 @@ import { View, Image } from '@tarojs/components'
 import './index.scss'
 
 export default function Icon(props) {
-  const {src, backgroundColor} = props;
+  const {src, background} = props;
   return (
-    <View className="customIconWrapper" style={{backgroundColor}}>
+    <View className="customIconWrapper" style={{background}}>
       <Image className="customIcon" src={src}/>
     </View>
   )
