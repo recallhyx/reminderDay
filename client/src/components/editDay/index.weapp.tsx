@@ -11,6 +11,7 @@ import birthday from '../../assets/icon/birthday.svg';
 import love from '../../assets/icon/love.svg'
 import work from '../../assets/icon/work.svg'
 import Icon from '../common/icon/index.weapp'
+import CustomSwitch from '../common/switch/index.weapp'
 
 type Props = {
   type: EDayType,
@@ -78,15 +79,18 @@ export default function EditDay(props:Props) {
         <CustomInput title="日期" value={day} onChange={(event) => onChange('day', event)} type='date'/>
       </View>
       <View className="editSwitchWrapper">
-        <View className="editSwitch">
-          <view className="switchBox" data-checked={isTop} onClick={() => onChange('isTop', null, !isTop)}>
-              <view className={`switch ${isTop ? 'switchChecked' : ''}`}>
-                  <view></view>
-              </view>
-              <Text className={`switchFalseText ${!isTop ? 'highlight' : ''}`}>{NOT_TOP}</Text>
-              <Text className={`switchTrueText ${isTop ? 'highlight' : ''}`}>{TOP}</Text>
-          </view>
-        </View>
+        <CustomSwitch 
+          check={isTop}
+          checkText={TOP}
+          notCheckText={NOT_TOP}
+          onChange={(check) => {onChange('isTop', null, check)}}
+        />
+        <CustomSwitch 
+          check={isTop}
+          checkText={TOP}
+          notCheckText={NOT_TOP}
+          onChange={(check) => {onChange('isTop', null, check)}}
+        />
       </View>
       <View className="editTagGroup">
         {
