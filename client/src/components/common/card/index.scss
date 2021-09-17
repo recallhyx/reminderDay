@@ -1,0 +1,39 @@
+.cardWrapper {
+    border-radius: 16rpx;
+    border: none;
+    padding: 16rpx 8rpx 16rpx 24rpx;
+}
+
+.cardTitleWrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    font-weight: bold;
+}
+
+.cardDay {
+    color: #f0f0f0;
+}
+
+.cardExact {
+    margin-top: 24rpx;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cardExactDayWrapper {
+    margin-right: 20rpx;
+
+    .cardExactDesc {
+        font-size: 24rpx;
+        color: #fafafa;
+    }
+
+    .cardExactDay {
+        font-size: 50rpx;
+        color: #f0f0f0;
+        margin: 0 16rpx;
+    }
+}

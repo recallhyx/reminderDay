@@ -12,6 +12,7 @@ import love from '../../assets/icon/love.svg'
 import work from '../../assets/icon/work.svg'
 import Icon from '../common/icon/index.weapp'
 import CustomSwitch from '../common/switch/index.weapp'
+import { CARD_BACKGROUND } from '../../utils/const'
 
 type Props = {
   type: EDayType,
@@ -23,19 +24,26 @@ const CREATE_DAY = '创建日子'
 const EDIT_DAY = '修改日子'
 const TOP = '置顶'
 const NOT_TOP = '不置顶'
+const NOT_REPEAT = '不重复'
+const REPEAT_YEAR = '每年'
 
 const ICON_GROUP = [
-  {icon: birthday, background: 'linear-gradient(347deg, #ff5530, #fe8041, #f9a353, #f2c466)', buttonColor: '#f9a353', text: '生日', tag: EDayTag.BIRTHDAY},
-  {icon: love, background: 'linear-gradient(-20deg, #ff0844 0%, #ffb199 100%);', buttonColor: '#ff0844', text: '纪念日', tag: EDayTag.LOVE},
-  {icon: work, background: 'linear-gradient(348deg, #0027f3, #3d62f8, #4995fc, #3ec7ff)', buttonColor: '#3d62f8', text: '工作', tag: EDayTag.WORK},
+  {icon: birthday, background: CARD_BACKGROUND.BIRTHDAY, buttonColor: '#f9a353', text: '生日', tag: EDayTag.BIRTHDAY},
+  {icon: love, background: CARD_BACKGROUND.LOVE, buttonColor: '#ff0844', text: '纪念日', tag: EDayTag.LOVE},
+  {icon: work, background: CARD_BACKGROUND.WORK, buttonColor: '#3d62f8', text: '工作', tag: EDayTag.WORK},
 ]
 
 export default function EditDay(props:Props) {
   const {type, data, onClick} = props;
+  console.log(data)
   const [editData, setEditData] = useState<ICreateDay>(data);
   const [buttonColor, setButtonColor] = useState<string>();
 
-  const {day, title, isTop, tag} = editData;
+  const {day, title, isTop, tag, isRepeat} = editData;
+
+  useEffect(() => {
+    setEditData(data);
+  }, [data])
 
   useEffect(() => {
     const item = ICON_GROUP.find((value) => value.tag === tag);
@@ -66,8 +74,9 @@ export default function EditDay(props:Props) {
       })
       return;
     }
+    console.log(editData);
     onClick(editData);
-  }, [title])
+  }, [title, editData])
 
   return (
     <View className='editWrapper'>
@@ -86,10 +95,10 @@ export default function EditDay(props:Props) {
           onChange={(check) => {onChange('isTop', null, check)}}
         />
         <CustomSwitch 
-          check={isTop}
-          checkText={TOP}
-          notCheckText={NOT_TOP}
-          onChange={(check) => {onChange('isTop', null, check)}}
+          check={isRepeat}
+          checkText={REPEAT_YEAR}
+          notCheckText={NOT_REPEAT}
+          onChange={(check) => {onChange('isRepeat', null, check)}}
         />
       </View>
       <View className="editTagGroup">

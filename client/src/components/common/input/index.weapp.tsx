@@ -1,4 +1,4 @@
-import React, { Component, useState } from 'react'
+import React, { Component, useCallback, useState } from 'react'
 import Taro from '@tarojs/taro'
 import { View, Text, Button, Input, Picker } from '@tarojs/components'
 
@@ -14,13 +14,13 @@ type Props = {
 export default function CustomInput(props) {
   const {title, type, onChange, value} = props;
 
-  const renderInput = () => {
+  const renderInput = useCallback(() => {
     switch(type) {
       case 'normal': {
         return (
           <View>
             <View className="customInputTitle">{title}</View>
-            <Input className="customInput" onInput={onChange} maxlength={15}/>
+            <Input className="customInput" value={value} onInput={onChange} maxlength={15}/>
           </View>
         )
       }
@@ -39,7 +39,7 @@ export default function CustomInput(props) {
         )
       }
     }
-  }
+  }, [title, type, onChange, value])
 
   return (
     <View className="customInputWrapper">

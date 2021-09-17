@@ -1,4 +1,4 @@
-import React, { Component, useCallback } from 'react'
+import React, { useCallback } from 'react'
 import Taro from '@tarojs/taro'
 import './index.scss'
 import EditDay from '../../components/editDay/index.weapp'
@@ -6,10 +6,11 @@ import { EDayTag, EDayType, ICreateDay } from '../../../types/type'
 
 import dayjs from 'dayjs';
 
-const newData = {
+const newData: ICreateDay = {
   day: dayjs().format('YYYY-MM-DD'),
   title: '',
   isTop: false,
+  isRepeat: false,
   tag: EDayTag.BIRTHDAY,
 }
 
@@ -20,7 +21,7 @@ export default function CreateDay() {
       Taro.showLoading({
         title: '创建中',
       })  
-      const res = await Taro.cloud.callFunction({
+      await Taro.cloud.callFunction({
         name: 'createDay',
         data: {
           ...data,
@@ -31,9 +32,12 @@ export default function CreateDay() {
       Taro.showToast({
         title: '创建成功',
         icon: 'success',
+        duration: 2000,
       })
-      Taro.navigateBack();
-      console.log(res);
+      setTimeout(() => {
+        Taro.hideToast();
+        Taro.navigateBack();
+      }, 2000)
     } catch(error) {
       console.log(error)
     }

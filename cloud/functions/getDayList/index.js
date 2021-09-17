@@ -13,7 +13,5 @@ exports.main = async (event, context) => {
     _openid: wxContext.OPENID,
   }).get();
   console.log(res);
-  return {
-    list: res.data,
-  }
+  return res.data
 }

@@ -4,7 +4,12 @@ import { View, Image } from '@tarojs/components'
 
 import './index.scss'
 
-export default function Icon(props) {
+type Props = {
+  src: string,
+  background: string
+}
+
+export default function Icon(props:Props) {
   const {src, background} = props;
   return (
     <View className="customIconWrapper" style={{background}}>

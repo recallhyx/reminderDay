@@ -1,7 +1,8 @@
 export default {
   pages: [
     'pages/index/index',
-    'pages/createDay/index'
+    'pages/createDay/index',
+    'pages/ModifyDay/index'
   ],
   window: {
     backgroundTextStyle: 'light',

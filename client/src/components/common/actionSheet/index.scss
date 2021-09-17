@@ -1,0 +1,106 @@
+.action-sheet {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.container {
+  position: absolute;
+  left: 0;
+  top: 100%;
+  width: 100%;
+  height: 30%;
+  background-color: #fff;
+}
+
+.container .cancel {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  line-height: 2;
+  font-size: 32rpx;
+  color: #333;
+  border-radius: 0;
+  background-color: #fff;
+  border-top: 12rpx solid #f7f7f7;
+  padding-bottom: 68rpx;
+}
+
+.container .cancel::after {
+  border: none;
+  border-radius: 0;
+}
+
+.show-action-sheet {
+  animation-name: show-animation;
+  animation-duration: 0.25s;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+.hide-action-sheet {
+  animation-name: hide-animation;
+  animation-duration: 0.25s;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+.show-mask-animation {
+  animation-name: show-mask;
+  animation-duration: 0.25s;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+.hide-mask-animation {
+  animation-name: hide-mask;
+  animation-duration: 0.25s;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+@keyframes show-animation {
+  from {
+    transform: translateY(0);
+  }
+
+  to {
+    transform: translateY(-100%);
+  }
+}
+
+@keyframes hide-animation {
+  from {
+    transform: translateY(-100%);
+  }
+
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes show-mask {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1.0;
+  }
+
+}
+
+@keyframes hide-mask {
+  from {
+    opacity: 1.0;
+  }
+
+  to {
+    opacity: 0;
+  }
+}

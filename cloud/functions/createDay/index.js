@@ -7,7 +7,7 @@ const db = cloud.database()
 
 // 云函数入口函数
 exports.main = async (event, context) => {
-  const { day, title, isTop, type, tag, createTime, } = event;
+  const { day, title, isTop, type, tag, createTime, isRepeat} = event;
   const wxContext = cloud.getWXContext();
   try {
     if (isTop) {
@@ -21,7 +21,7 @@ exports.main = async (event, context) => {
     }
     await db.collection('anniversary').add({
       // data 字段表示需新增的 JSON 数据
-      data: { day, title, isTop, type, tag, createTime, _openid: wxContext.OPENID},
+      data: { day, title, isTop, type, tag, createTime, modifyTime:createTime, isRepeat, _openid: wxContext.OPENID},
     })
     console.log(event)
   } catch (error) {

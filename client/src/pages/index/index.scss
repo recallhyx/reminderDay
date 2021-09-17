@@ -1,0 +1,61 @@
+.dayListWrapper {
+    padding: 0 32rpx 0 32rpx;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.topDayWrapper {
+    padding-bottom: 32rpx;
+    border-bottom: 1px solid #f9f9f9;
+}
+
+.topDay {
+    display: flex;
+    justify-content: space-between;
+}
+
+.topDayTitle {
+    font-size: 50rpx;
+    font-weight: bold;
+    color: #373737;
+}
+
+.topDayCount {
+    margin-top: 50rpx;
+}
+
+.topDayDesc {
+    font-size: 30rpx;
+    margin-left: 16rpx;
+}
+
+.topDayExact {
+    font-size: 100rpx;
+    font-weight: bold;
+    margin-right: 20rpx;
+    color: #303541;
+}
+
+.topDayText {
+    background: #CDDBEB;
+    color: white;
+    padding: 0rpx 16rpx;
+}
+
+.topDayInfo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.topDayDay {
+    color: #9199A9;
+}
+
+.scrollView {
+    height: calc(100vh - 400rpx);
+}
+
+.dayCardWrapper {
+    margin-top: 32rpx;
+}
