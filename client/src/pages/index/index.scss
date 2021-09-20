@@ -1,3 +1,29 @@
+.noData {
+    height: 100vh;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    flex-direction: column;
+    .noDataImage {
+        margin-top: 50rpx;
+        width: 300rpx;
+    }
+    .noDataTitle {
+        margin-top: 30rpx;
+        font-size: 50rpx;
+    }
+    .noDataText {
+        margin-top: 16rpx;
+    }
+    .noDataButton {
+        margin-top: 60rpx;
+        width: 532rpx;
+        border-radius: 50rpx;
+        background: linear-gradient(347deg, #ff5530, #fe8041, #f9a353, #f2c466);
+        color: #fff;
+    }
+}
+
 .dayListWrapper {
     padding: 0 32rpx 0 32rpx;
     height: 100vh;
@@ -6,6 +32,7 @@
 
 .topDayWrapper {
     padding-bottom: 32rpx;
+    margin-bottom: 32rpx;
     border-bottom: 1px solid #f9f9f9;
 }
 
@@ -58,4 +85,21 @@
 
 .dayCardWrapper {
     margin-top: 32rpx;
+    &:first-child {
+       margin-top: 0; 
+    }
+}
+
+.actionSheetButton {
+    background: none;
+    &::after {
+        border: none;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+        border-radius: unset;
+    }
+}
+
+.actionSheetDangerButton {
+    background: none;
+    color: red;
 }

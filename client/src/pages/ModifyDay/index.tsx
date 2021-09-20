@@ -15,34 +15,34 @@ const newData: ICreateDay = {
 }
 
 export default function ModifyDay() {
-  const {params} = useRouter();
+  const { params } = useRouter();
   const ID = useRef<string>();
   const [modifyDay, setModifyDay] = useState<ICreateDay>();
 
   useEffect(() => {
     if (!params.data) {
-        return;
+      return;
     }
     console.log(params.data)
-    const data = JSON.parse(params.data) as IDayCard;
-    const {day, title, isTop, isRepeat, tag, _id} = data;
+    const data = JSON.parse(decodeURIComponent(params.data)) as IDayCard;
+    const { day, title, isTop, isRepeat, tag, _id } = data;
     ID.current = _id;
     const modifyDayData = {
-        day,
-        title,
-        isTop,
-        isRepeat,
-        tag,
-      };
-      setModifyDay(modifyDayData)
+      day,
+      title,
+      isTop,
+      isRepeat,
+      tag,
+    };
+    setModifyDay(modifyDayData)
   }, [params.data])
 
-  const modify = useCallback(async (data:ICreateDay) => {
+  const modify = useCallback(async (data: ICreateDay) => {
     console.log(data);
     try {
       Taro.showLoading({
         title: '修改中',
-      })  
+      })
       await Taro.cloud.callFunction({
         name: 'modifyDay',
         data: {
@@ -61,7 +61,7 @@ export default function ModifyDay() {
         Taro.hideToast();
         Taro.navigateBack();
       }, 2000)
-    } catch(error) {
+    } catch (error) {
       console.log(error)
     }
   }, []);

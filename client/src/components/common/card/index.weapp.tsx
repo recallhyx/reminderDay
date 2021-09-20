@@ -3,33 +3,34 @@ import Taro from '@tarojs/taro'
 import { View, Text } from '@tarojs/components'
 
 import './index.scss'
-import { IDayCard } from '../../../../types/type'
+import { EDayUnit, IDayCard } from '../../../../types/type'
 import Icon from '../icon/index.weapp'
 
 import operation from '../../../assets/icon/operation.svg'
+import { DAY, HOUR, TODAY } from '../../../utils/const'
 
 type Props = {
     data: IDayCard;
-    onIconClick: (data?:any) => void;
+    onClick?: (data?:any) => void;
+    onIconClick?: (data?:any) => void;
 }
 
-const DAY = '天'
-
 export default function Card(props:Props) {
-    const {dayDesc, day, icon, title, backgroundColor, exactDay, isRepeat} = props.data;
+    const {dayDesc, day, icon, title, backgroundColor, exactDay, isRepeat, week, unit} = props.data;
+    const suffix = exactDay === TODAY ? '' : unit === EDayUnit.HOUR ? HOUR : DAY
     return (
-        <View className="cardWrapper" style={{background: backgroundColor}}>
-            <View className="cardTitleWrapper" onClick={props.onIconClick}>
+        <View className="cardWrapper" onClick={props.onClick} style={{background: backgroundColor}}>
+            <View className="cardTitleWrapper">
                 <Text>{title}</Text>
-                <Icon src={operation} background='none'/>
+                <Icon src={operation} onClick={props.onIconClick} background='none'/>
             </View>
-            <View className='cardDay'>{day}</View>
+            <View className='cardDay'>{`${day} ${week}`}</View>
             <View className='cardExact'>
                 <Icon src={icon} background={backgroundColor}/>
                 <View className='cardExactDayWrapper'>
                     <Text className='cardExactDesc'>{dayDesc}</Text>
                     <Text className='cardExactDay'>{exactDay}</Text>
-                    <Text className='cardExactDesc'>{DAY}</Text>
+                    <Text className='cardExactDesc'>{suffix}</Text>
                 </View>
             </View>
         </View>

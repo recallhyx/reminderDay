@@ -21,7 +21,7 @@ exports.main = async (event, context) => {
         }
         await db.collection('anniversary').doc(_id).update({
           // data 字段表示需新增的 JSON 数据
-          data: { day, title, isTop, type, tag, modifyTime:createTime, isRepeat},
+          data: { day, title, isTop, type, tag, modifyTime:modifyTime, isRepeat},
         })
         console.log(event)
       } catch (error) {

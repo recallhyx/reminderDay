@@ -1,0 +1,56 @@
+.detailDayWrapper {
+    height: 100vh;
+    padding: 200rpx 64rpx 100rpx;
+    box-sizing: border-box;
+}
+
+.detailDayTitleWrapper {
+    color: white;
+    font-weight: bold;
+    .detailDayTitle {
+        font-size: 60rpx;
+       
+    }
+    .detailDayDay {
+        margin-top: 50rpx;
+    }
+}
+
+.detailDayIcon {
+    position: absolute;
+    right: -10%;
+    top: calc(50% - 225rpx);
+    height: 550rpx;
+    width: 550rpx;
+}
+
+.detailDayExactWrapper {
+    position:absolute;
+    bottom: 15%;
+    left: 64rpx;
+    color: white;
+    font-weight: bold;
+    .deatailDayDesc {
+        
+    }
+    .detailDayExactDayWrapper {
+        margin-top: 30rpx;
+    }
+    .detailDayExact {
+        font-size: 100rpx;
+        margin-right: 30rpx;
+    }
+}
+
+.detailFullDay {
+    margin-top: 30rpx;
+    display: flex;
+    .detailFullDayExact {
+        font-size: 100rpx;
+        margin-right: 16rpx;
+    }
+    .detailFullDayUnit {
+        margin-right: 30rpx;
+    }
+}
+

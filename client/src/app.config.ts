@@ -2,13 +2,15 @@ export default {
   pages: [
     'pages/index/index',
     'pages/createDay/index',
-    'pages/ModifyDay/index'
+    'pages/modifyDay/index',
+    'pages/detail/index'
   ],
   window: {
     backgroundTextStyle: 'light',
     navigationBarBackgroundColor: '#fff',
-    navigationBarTitleText: 'WeChat',
+    navigationBarTitleText: '记记日子',
     navigationBarTextStyle: 'black'
   },
-  cloud: true
+  cloud: true,
+
 }

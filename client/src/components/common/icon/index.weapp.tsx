@@ -6,13 +6,15 @@ import './index.scss'
 
 type Props = {
   src: string,
-  background: string
+  background: string,
+  onClick?: (e:any) => void,
 }
 
 export default function Icon(props:Props) {
-  const {src, background} = props;
+  const {src, background, onClick} = props;
+  
   return (
-    <View className="customIconWrapper" style={{background}}>
+    <View onClick={(e) => onClick && onClick(e)} className="customIconWrapper" style={{background}}>
       <Image className="customIcon" src={src}/>
     </View>
   )

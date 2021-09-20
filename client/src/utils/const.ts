@@ -19,3 +19,23 @@ export const getBackground = (tag:EDayTag) => {
         }
     }
 }
+
+export const TODAY = '今天'
+export const DAY = '天'
+export const HOUR = '小时'
+
+export const NO_DATA = '暂无数据'
+export const NO_DATA_TEXT = '还没有任何日子哦，\n点击下方按钮添加吧'
+
+export const DAY_DESC_UNTIL = '还有'
+export const DAY_DESC_SINCE = '已经'
+export const DAY_DESC_TODAY = '就是'
+
+export const WEEK = ['星期日','星期一','星期二','星期三','星期四','星期五','星期六',]
+
+export const TRANSLATE = {
+    years: '年',
+    months: '月',
+    days: '日',
+    hours: '小时',
+}

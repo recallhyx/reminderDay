@@ -20,12 +20,14 @@ export default function CreateDay() {
     try {
       Taro.showLoading({
         title: '创建中',
-      })  
+      })
+      const now = new Date();
       await Taro.cloud.callFunction({
         name: 'createDay',
         data: {
           ...data,
-          createTime: new Date(),
+          createTime: now,
+          modifyTime: now,
         },
       })
       Taro.hideLoading();

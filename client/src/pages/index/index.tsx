@@ -1,27 +1,26 @@
-import React, { Component, useCallback, useEffect, useState } from 'react'
-import Taro, { Config, useDidShow, usePullDownRefresh } from '@tarojs/taro'
-import { View, Text, Button, ScrollView } from '@tarojs/components'
+import React, { Component, useCallback, useEffect, useRef, useState } from 'react'
+import Taro, { Config, useDidShow, usePullDownRefresh, useShareAppMessage } from '@tarojs/taro'
+import { View, Text, Button, ScrollView, Image } from '@tarojs/components'
 import './index.scss'
-import { EDayTag, IDay, IDayCard, IDayCardList, IDayList } from '../../../types/type';
-import {useCloudFunction} from '../../hooks/hook'
+import { EDayTag, EDayUnit, IDay, IDayCard, IDayCardList, IDayList } from '../../../types/type';
+import {useCloudFunction} from '../../hooks/useCloudFunction'
 import Icon from '../../components/common/icon/index.weapp';
 import dayjs from 'dayjs'
 
 import add from '../../assets/icon/add.svg';
-import { getIcon } from '../../utils/getIcon';
-import { getBackground } from '../../utils/const';
-import Card from '../../components/common/card/index.weapp';
+import noData from '../../assets/image/noData.svg';
 
-const DAY_DESC_UNTIL = '还有'
-const DAY_DESC_SINCE = '已经'
-const DAY_DESC_TODAY = '就是'
-const TODAY = '今天'
-const DAY = '天'
+import { getIcon } from '../../utils/getIcon';
+import { DAY, DAY_DESC_SINCE, DAY_DESC_TODAY, DAY_DESC_UNTIL, getBackground, HOUR, NO_DATA, NO_DATA_TEXT, TODAY, WEEK } from '../../utils/const';
+import Card from '../../components/common/card/index.weapp';
+import CustomActionSheet from '../../components/common/actionSheet/index.weapp';
 
 export default function Index() {
-  console.log('enter')
+  const [show, setShow] = useState<boolean>(false);
   const [list, setList] = useState<IDayCardList>([]);
   const [top, setTop] = useState<IDayCard>();
+
+  const selectedCard = useRef<IDayCard>()
   const [loading, fetch, result] = useCloudFunction<void, IDayList>('getDayList');
 
   useEffect(() => {
@@ -39,6 +38,7 @@ export default function Index() {
   useEffect(() => {
     if (!result || !result.length) {
       setList([]);
+      setTop(undefined);
       return;
     }
     console.log(result)
@@ -50,6 +50,7 @@ export default function Index() {
       let day = dayjs(item.day);
       let dayDesc;
       let exactDay;
+      let unit = EDayUnit.DAY;
       if (item.isRepeat) {
         dayDesc = DAY_DESC_UNTIL;
         // 重复 需要将年设置为当前年
@@ -61,30 +62,40 @@ export default function Index() {
           day = day.add(1, 'year');
           exactDay = Math.abs(now.diff(day, 'day'));
         } else {
-          exactDay = Math.abs(now.diff(day, 'day'));
+          const temp = Math.abs(now.diff(day, 'day'));
+          if (!temp) {
+            unit = EDayUnit.HOUR;
+            exactDay = Math.abs(now.diff(day, 'hours'));
+          } else {
+            exactDay = temp;
+          }
         }
       } else {
         if (now.isSame(day, 'day')) {
           dayDesc = DAY_DESC_TODAY
           exactDay = TODAY
         } else {
-          exactDay = Math.abs(now.diff(day, 'day'));
+          const temp = Math.abs(now.diff(day, 'day'));
+          if (!temp) {
+            unit = EDayUnit.HOUR;
+            exactDay = Math.abs(now.diff(day, 'hours'))
+          } else {
+            exactDay = temp;
+          }
           dayDesc = day.isBefore(now) ? DAY_DESC_SINCE : DAY_DESC_UNTIL;
         }
       }
       
+      const week = `${WEEK[dayjs(item.day).day()]}`
+
       return {
-        title: item.title,
-        createTime: item.createTime,
+        ...item,
         icon,
         dayDesc,
-        day: item.day,
+        week,
         backgroundColor,
-        isTop: item.isTop,
         exactDay,
-        isRepeat: item.isRepeat,
-        tag: item.tag,
-        _id: item._id,
+        unit,
       }
     })
     console.log('cardlist', cardList)
@@ -94,7 +105,7 @@ export default function Index() {
     if (topIndex !== -1) {
       nowTop = cardList.splice(topIndex, 1)[0];
     }
-    const res = cardList.sort((a, b) => new Date(b.createTime).getTime() - new Date(a.createTime).getTime());
+    const res = cardList.sort((a, b) => new Date(b.modifyTime).getTime() - new Date(a.modifyTime).getTime());
 
     if (nowTop) {
       setTop(nowTop)
@@ -106,61 +117,121 @@ export default function Index() {
     console.log(res)
   }, [result])
 
-  const onIconClick = (item:IDayCard) => {
-    Taro.showActionSheet({
-      itemList: ['置顶', '编辑', '分享']
+  const onIconClick = (e:Event, item:IDayCard) => {
+    e.stopPropagation();
+    setShow(true);
+    selectedCard.current = item;
+  }
+
+  const onCardClick = (item:IDayCard) => {
+    console.log(item, JSON.stringify(item))
+    Taro.navigateTo({
+      url: `/pages/detail/index?data=${encodeURIComponent(JSON.stringify(item))}`
+    })
+  }
+
+  const onEditClick = () => {
+    const day = {
+      ...selectedCard.current,
+      icon: '',
+    }
+    Taro.navigateTo({
+      url: `../modifyDay/index?data=${encodeURIComponent(JSON.stringify(day))}`
+    })
+  }
+
+  const onSetTopClick = async (isTop:boolean | undefined) => {
+    if (!selectedCard.current || isTop === undefined) {
+      return;
+    }
+    Taro.showLoading({
+      title: isTop ? '正在置顶中' : '正在取消置顶'
+    })
+    console.log('isTop', isTop)
+    await Taro.cloud.callFunction({
+      name: 'setTopDay',
+      data: {
+        _id: selectedCard.current._id,
+        top: isTop,
+      }
+    })
+    Taro.hideLoading();
+    fetch();
+  }
+
+  const onDeleteClick = async () => {
+    Taro.showModal({
+      content: `确定要删除 “${selectedCard.current?.title}” 吗？`,
+      success: function (res) {
+        if (res.confirm) {
+          console.log('用户点击确定')
+        } else if (res.cancel) {
+          console.log('用户点击取消')
+        }
+      }
     }).then(async (res) => {
-      switch(res.tapIndex) {
-        case 0: {
-          Taro.showLoading({
-            title: '正在置顶中'
-          })
-          await Taro.cloud.callFunction({
-            name: 'setTopDay',
-            data: {
-              _id: item._id,
-            }
-          })
-          Taro.hideLoading();
-          fetch();
+      if (res.confirm) {
+        if (!selectedCard.current) {
           return;
         }
-        case 1: {
-          console.log(item)
-          const day = {
-            ...item,
-            icon: '',
+        Taro.showLoading({
+          title: '正在删除中'
+        })
+        await Taro.cloud.callFunction({
+          name: 'deleteDay',
+          data: {
+            _id: selectedCard.current._id,
           }
-          Taro.navigateTo({
-            url: `../ModifyDay/index?data=${JSON.stringify(day)}`
-          })
-          return;
-        }
-        case 2: {
-          Taro.useShareAppMessage
-          return;
-        }
+        })
+        Taro.hideLoading();
+        fetch();
       }
     })
   }
-  usePullDownRefresh(() => {
-    fetch();
+
+  usePullDownRefresh(async () => {
+    await fetch();
+    Taro.stopPullDownRefresh();
   })
 
   useDidShow(() => {
     fetch();
   })
 
+  useShareAppMessage(() => {
+    if (!selectedCard.current) {
+      return {
+        path: '/pages/createDay'
+      };
+    }
+    const { day, title, isTop, isRepeat, tag, _id } = selectedCard.current;
+    const modifyDayData = {
+      day,
+      title,
+      isTop,
+      isRepeat,
+      tag,
+      _id,
+    };
+    return {
+      title,
+      path: `/pages/modifyDay/index?data=${JSON.stringify(modifyDayData)}`,
+    }
+  })
+
   return (
     <View className='index'>
       {
         !list.length && !top ? (
-          <View>
-             <Button onClick={() => {Taro.navigateTo({url: '../createDay/index'})}}>添加</Button>
+          <View className="noData">
+             <Image className="noDataImage" src={noData} />
+             <Text className="noDataTitle">{NO_DATA}</Text>
+             <Text className="noDataText">{NO_DATA_TEXT}</Text>
+             <Button className="noDataButton" onClick={() => {Taro.navigateTo({url: '../createDay/index'})}}>添加</Button>
           </View>
         ) : (
           <View className="dayListWrapper">
-            <View className='topDayWrapper'>
+            <View className='topDayWrapper' onClick={() => onCardClick(top!)}>
               <View className='topDay'>
                 <View>
                   <Text className='topDayTitle'>{top?.title}</Text>
@@ -172,18 +243,23 @@ export default function Index() {
               </View>
               <View className='topDayCount'>
                 <Text className='topDayExact'>{top?.exactDay}</Text>
-                <Text className='topDayText'>{top?.exactDay === TODAY ? '' : DAY}</Text>
+                {
+                  top?.exactDay !== TODAY && (
+                    <Text className='topDayText'>{top?.unit === EDayUnit.HOUR ? HOUR : DAY}</Text>
+                  )
+                }
+                
               </View>
               <View className='topDayInfo'>
-                <Text className="topDayDay">{top?.day}</Text>
-                <Icon src={top!.icon} background={top!.backgroundColor} />
+                <Text className="topDayDay">{`${top?.day} ${top?.week}`}</Text>
+                <Icon src={top!.icon} onClick={(e) => onIconClick(e, top!)} background={top!.backgroundColor} />
               </View>
             </View>
             <ScrollView className='scrollView' scrollY>
             {
               list.map((item) => (
                 <View className='dayCardWrapper'>
-                  <Card key={item._id} data={item} onIconClick={() => onIconClick(item)}/>
+                  <Card key={item._id} data={item} onClick={() => onCardClick(item)} onIconClick={(e) => onIconClick(e ,item)}/>
                 </View>
               ))
             }
@@ -191,6 +267,14 @@ export default function Index() {
           </View>
         )
       }
+      <CustomActionSheet actionShow={show} onChange={(show) => setShow(show)}>
+        <Button className="actionSheetButton" onClick={onEditClick}>编辑</Button>
+        <Button className="actionSheetButton" onClick={() => onSetTopClick(!selectedCard.current?.isTop)}>
+          {selectedCard.current?.isTop ? '取消置顶' : '置顶'}
+        </Button>
+        <Button className="actionSheetButton" openType='share'>分享</Button>
+        <Button className="actionSheetDangerButton" onClick={onDeleteClick}>删除</Button>
+      </CustomActionSheet>
     </View>
   )
 }
