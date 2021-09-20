@@ -88,6 +88,9 @@
     &:first-child {
        margin-top: 0; 
     }
+    &:last-child {
+        margin-bottom: 32rpx;
+    }
 }
 
 .actionSheetButton {

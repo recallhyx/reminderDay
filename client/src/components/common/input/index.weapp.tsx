@@ -29,7 +29,7 @@ export default function CustomInput(props) {
           <View>
             <Text className="customInputTitle">{title}</Text>
             <View className="customInput">
-              <Picker className="customPicker" value={value} mode='date' onChange={onChange}>
+              <Picker className="customPicker" value={value} mode='date' start="1900-01-01" onChange={onChange}>
                 <View className='picker'>
                   {value}
                 </View>

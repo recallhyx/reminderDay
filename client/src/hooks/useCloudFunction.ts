@@ -21,11 +21,13 @@ export const useCloudFunction = <T, R>(functionName: string, data?: T) : [boolea
       setResult(res.result);
     } catch(error) {
       setLoading(false);
+      Taro.showToast({
+        title: '请求出错，请下拉刷新重试~'
+      })
       console.log(error)
     }
   }
   useEffect(() => {
-    console.log('fetch')
     fetch();
   }, []);
 

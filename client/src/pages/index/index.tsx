@@ -231,13 +231,13 @@ export default function Index() {
           </View>
         ) : (
           <View className="dayListWrapper">
-            <View className='topDayWrapper' onClick={() => onCardClick(top!)}>
+            <View className='topDayWrapper' onClick={(e) => {e.stopPropagation(); onCardClick(top!)}}>
               <View className='topDay'>
                 <View>
                   <Text className='topDayTitle'>{top?.title}</Text>
                   <Text className='topDayDesc'>{top?.dayDesc}</Text>
                 </View>
-                <View onClick={() => {Taro.navigateTo({url: '../createDay/index'})}}>
+                <View onClick={(e) => {e.stopPropagation(); Taro.navigateTo({url: '../createDay/index'})}}>
                   <Icon src={add} background="linear-gradient(to right, #bdc3c7, #2c3e50);"/>
                 </View>
               </View>
