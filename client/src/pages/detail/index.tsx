@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import Taro, { useRouter } from '@tarojs/taro'
+import Taro, { useRouter, useShareAppMessage } from '@tarojs/taro'
 import { View, Text, Button, Image } from '@tarojs/components'
 
 import './index.scss'
@@ -57,6 +57,27 @@ export default function Detail(props) {
             })
         }
     }, [displayMode, showDay])
+
+    useShareAppMessage(() => {
+        if (!showDay) {
+            return {
+                path: '/pages/createDay'
+            };
+        }
+        const { day, title, isTop, isRepeat, tag, _id } = showDay;
+        const modifyDayData = {
+            day,
+            title,
+            isTop,
+            isRepeat,
+            tag,
+            _id,
+        };
+        return {
+            title,
+            path: `/pages/modifyDay/index?data=${JSON.stringify(modifyDayData)}`,
+        }
+    })
 
     const setMode = () => {
         console.log(showDay)

@@ -15,9 +15,10 @@ import CustomSwitch from '../common/switch/index.weapp'
 import { CARD_BACKGROUND } from '../../utils/const'
 
 type Props = {
-  type: EDayType,
-  data: ICreateDay,
-  onClick: (data: ICreateDay) => {},
+  type: EDayType;
+  data: ICreateDay;
+  onClick: (data: ICreateDay) => {};
+  onCancel?: () => void;
 }
 
 const CREATE_DAY = '创建日子'
@@ -78,6 +79,14 @@ export default function EditDay(props:Props) {
     onClick(editData);
   }, [title, editData])
 
+  const onCancel = () => {
+    if (props.onCancel) {
+      props.onCancel();
+      return;
+    }
+    Taro.navigateBack();
+  }
+
   return (
     <View className='editWrapper'>
       <View className="editTitle">{type === EDayType.CREATE ? CREATE_DAY : EDIT_DAY }</View>
@@ -119,7 +128,7 @@ export default function EditDay(props:Props) {
           className="editConfirm" 
           style={{background: buttonColor}}
           onClick={onConfirm}>{type === EDayType.CREATE ? '创建' : '确定' }</Button>
-        <Text className="editCancel" onClick={() => Taro.navigateBack()}>取消</Text>
+        <Text className="editCancel" onClick={onCancel}>取消</Text>
       </View>
     </View>
   )

@@ -1,5 +1,5 @@
-import React, { useCallback } from 'react'
-import Taro from '@tarojs/taro'
+import React, { useCallback, useEffect, useState } from 'react'
+import Taro, { navigateBack, useRouter } from '@tarojs/taro'
 import './index.scss'
 import EditDay from '../../components/editDay/index.weapp'
 import { EDayTag, EDayType, ICreateDay } from '../../../types/type'
@@ -15,6 +15,21 @@ const newData: ICreateDay = {
 }
 
 export default function CreateDay() {
+  const { params } = useRouter();
+  const [createDay, setCreateDay] = useState<ICreateDay>()
+
+  useEffect(() => {
+    if (!params.data) {
+        Taro.showToast({
+            title: '出错了，请重试',
+        })
+        return;
+    }
+    const data = JSON.parse(decodeURIComponent(params.data)) as ICreateDay;
+    console.log(data)
+    setCreateDay(data)
+}, [params.data])
+
   const create = useCallback(async (data:ICreateDay) => {
     console.log(data);
     try {
@@ -45,11 +60,22 @@ export default function CreateDay() {
     }
   }, []);
 
+  const onCancel = useCallback(() => {
+    if (!createDay) {
+      Taro.navigateBack()
+      return;
+    }
+    Taro.navigateTo({
+      url: '/pages/index/index'
+    })
+  }, [JSON.stringify(createDay)])
+
   return (
     <EditDay
       type={EDayType.CREATE}
-      data={newData}
+      data={createDay || newData}
       onClick={create}
+      onCancel={onCancel}
     />
   )
 }

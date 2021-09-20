@@ -1,5 +1,5 @@
 import React, { Component, useCallback, useEffect, useRef, useState } from 'react'
-import Taro, { Config, useDidShow, usePullDownRefresh, useShareAppMessage } from '@tarojs/taro'
+import Taro, { Config, useDidShow, usePullDownRefresh, useReady, useShareAppMessage } from '@tarojs/taro'
 import { View, Text, Button, ScrollView, Image } from '@tarojs/components'
 import './index.scss'
 import { EDayTag, EDayUnit, IDay, IDayCard, IDayCardList, IDayList } from '../../../types/type';
@@ -189,6 +189,10 @@ export default function Index() {
     })
   }
 
+  useReady(() => {
+    Taro.hideShareMenu();
+  })
+
   usePullDownRefresh(async () => {
     await fetch();
     Taro.stopPullDownRefresh();
@@ -211,11 +215,10 @@ export default function Index() {
       isTop,
       isRepeat,
       tag,
-      _id,
     };
     return {
       title,
-      path: `/pages/modifyDay/index?data=${JSON.stringify(modifyDayData)}`,
+      path: `/pages/createDay/index?data=${JSON.stringify(modifyDayData)}`,
     }
   })
 
