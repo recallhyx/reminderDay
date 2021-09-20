@@ -20,9 +20,6 @@ export default function CreateDay() {
 
   useEffect(() => {
     if (!params.data) {
-        Taro.showToast({
-            title: '出错了，请重试',
-        })
         return;
     }
     const data = JSON.parse(decodeURIComponent(params.data)) as ICreateDay;
@@ -65,7 +62,7 @@ export default function CreateDay() {
       Taro.navigateBack()
       return;
     }
-    Taro.navigateTo({
+    Taro.redirectTo({
       url: '/pages/index/index'
     })
   }, [JSON.stringify(createDay)])

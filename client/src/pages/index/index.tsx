@@ -218,7 +218,7 @@ export default function Index() {
     };
     return {
       title,
-      path: `/pages/createDay/index?data=${JSON.stringify(modifyDayData)}`,
+      path: `/pages/createDay/index?data=${encodeURIComponent(JSON.stringify(modifyDayData))}`,
     }
   })
 
