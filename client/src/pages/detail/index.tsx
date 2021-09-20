@@ -71,11 +71,10 @@ export default function Detail(props) {
             isTop,
             isRepeat,
             tag,
-            _id,
         };
         return {
             title,
-            path: `/pages/modifyDay/index?data=${JSON.stringify(modifyDayData)}`,
+            path: `/pages/createDay/index?data=${encodeURIComponent(JSON.stringify(modifyDayData))}`,
         }
     })
 
