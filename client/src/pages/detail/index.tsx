@@ -113,31 +113,34 @@ export default function Detail(props) {
     }, [JSON.stringify(fullDay)])
 
     return (
-        <View className="detailDayWrapper" onClick={() => setMode()} style={{ background: showDay?.backgroundColor }}>
-            <View className="detailDayTitleWrapper">
-                <View className="detailDayTitle">{showDay?.title}</View>
-                <View className="detailDayDay">{`${showDay?.day} ${showDay?.week}`}</View>
-            </View>
-            <Image className="detailDayIcon" src={showDay?.icon || ''} />
-            <View className="detailDayExactWrapper">
-                <View className="deatailDayDesc">{showDay?.dayDesc}</View>
-                {
-                    displayMode === EDisplayType.ONLY_DAY ? (
-                        <View className="detailDayExactDayWrapper">
-                            <Text className="detailDayExact">{showDay?.exactDay}</Text>
-                            <Text className='deatailDayDesc'>
-                                {
-                                    showDay?.exactDay !== TODAY && (showDay?.unit === EDayUnit.DAY ? DAY : HOUR)
-                                }
-                            </Text>
-                        </View>
-                    ) : (
-                            <View>
-                                {fullDayShow()}
+        <View className="detailDay">
+            <View className="detailDayWrapper" onClick={() => setMode()} style={{ background: showDay?.backgroundColor }}>
+                <View className="detailDayTitleWrapper">
+                    <View className="detailDayTitle">{showDay?.title}</View>
+                    <View className="detailDayDay">{`${showDay?.day} ${showDay?.week}`}</View>
+                </View>
+                <Image className="detailDayIcon" src={showDay?.icon || ''} />
+                <View className="detailDayExactWrapper">
+                    <View className="deatailDayDesc">{showDay?.dayDesc}</View>
+                    {
+                        displayMode === EDisplayType.ONLY_DAY ? (
+                            <View className="detailDayExactDayWrapper">
+                                <Text className="detailDayExact">{showDay?.exactDay}</Text>
+                                <Text className='deatailDayDesc'>
+                                    {
+                                        showDay?.exactDay !== TODAY && (showDay?.unit === EDayUnit.DAY ? DAY : HOUR)
+                                    }
+                                </Text>
                             </View>
-                        )
-                }
+                        ) : (
+                                <View>
+                                    {fullDayShow()}
+                                </View>
+                            )
+                    }
+                </View>
             </View>
+
         </View>
     )
 }

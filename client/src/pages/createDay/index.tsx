@@ -50,12 +50,18 @@ export default function CreateDay() {
       })
       setTimeout(() => {
         Taro.hideToast();
-        Taro.navigateBack();
+        if (!createDay) {
+          Taro.navigateBack()
+          return;
+        }
+        Taro.redirectTo({
+          url: '/pages/index/index'
+        })
       }, 2000)
     } catch(error) {
       console.log(error)
     }
-  }, []);
+  }, [JSON.stringify(createDay)]);
 
   const onCancel = useCallback(() => {
     if (!createDay) {
