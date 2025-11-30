@@ -36,7 +36,20 @@ export default function Index() {
   }, [loading]);
 
   useEffect(() => {
-    if (!result || !result.length) {
+    // 如果 result 为 undefined 或 null，说明还在加载，不处理
+    if (result === undefined || result === null) {
+      return;
+    }
+    
+    // 如果 result 是空数组，清空列表和置顶项
+    if (Array.isArray(result) && !result.length) {
+      setList([]);
+      setTop(undefined);
+      return;
+    }
+    
+    // 如果 result 不是数组，说明可能出错了，也清空
+    if (!Array.isArray(result)) {
       setList([]);
       setTop(undefined);
       return;

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import Taro, { Config } from '@tarojs/taro'
+import Taro from '@tarojs/taro'
 
 import './app.scss'
 
@@ -7,7 +7,14 @@ class App extends Component {
 
   componentDidMount () {
     if (process.env.TARO_ENV === 'weapp') {
-      Taro.cloud.init()
+      try {
+        Taro.cloud.init({
+          traceUser: true
+        })
+        console.log('云函数初始化成功');
+      } catch (error) {
+        console.error('云函数初始化失败:', error);
+      }
     }
   }
 

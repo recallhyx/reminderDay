@@ -23,7 +23,7 @@
       "node_modules/@types",
       "global.d.ts"
     ],
-    "esModuleInterop": true,
+    "esModuleInterop": true
   },
   "exclude": [
     "node_modules",

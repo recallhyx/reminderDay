@@ -12,5 +12,5 @@ export default {
     navigationBarTextStyle: 'black'
   },
   cloud: true,
-
+  subPackages: []
 }
