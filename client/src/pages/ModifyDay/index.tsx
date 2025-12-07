@@ -1,8 +1,9 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import Taro, { useRouter } from '@tarojs/taro'
 import './index.scss'
 import EditDay from '../../components/editDay/index.weapp'
 import { EDayTag, EDayType, ICreateDay, IDayCard } from '../../../types/type'
+import { modifyDay as modifyDayService } from '../../services'
 
 import dayjs from 'dayjs';
 
@@ -23,7 +24,6 @@ export default function ModifyDay() {
     if (!params.data) {
       return;
     }
-    console.log(params.data)
     const data = JSON.parse(decodeURIComponent(params.data)) as IDayCard;
     const { day, title, isTop, isRepeat, tag, _id } = data;
     ID.current = _id;
@@ -38,18 +38,19 @@ export default function ModifyDay() {
   }, [params.data])
 
   const modify = useCallback(async (data: ICreateDay) => {
-    console.log(data);
+    if (!ID.current) {
+        console.error('缺少 ID');
+        return;
+    }
+
     try {
       Taro.showLoading({
         title: '修改中',
       })
-      await Taro.cloud.callFunction({
-        name: 'modifyDay',
-        data: {
-          ...data,
-          _id: ID.current,
-          modifyTime: new Date(),
-        },
+      await modifyDayService({
+        ...data,
+        _id: ID.current,
+        modifyTime: new Date(),
       })
       Taro.hideLoading();
       Taro.showToast({
@@ -62,7 +63,11 @@ export default function ModifyDay() {
         Taro.navigateBack();
       }, 2000)
     } catch (error) {
-      console.log(error)
+      Taro.hideLoading();
+      Taro.showToast({
+        title: '修改失败',
+        icon: 'none'
+      })
     }
   }, []);
 

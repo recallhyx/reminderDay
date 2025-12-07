@@ -1,8 +1,9 @@
-import React, { useCallback, useEffect, useState } from 'react'
-import Taro, { navigateBack, useRouter } from '@tarojs/taro'
+import { useCallback, useEffect, useState } from 'react'
+import Taro, { useRouter } from '@tarojs/taro'
 import './index.scss'
 import EditDay from '../../components/editDay/index.weapp'
 import { EDayTag, EDayType, ICreateDay } from '../../../types/type'
+import { createDay as createDayService } from '../../services'
 
 import dayjs from 'dayjs';
 
@@ -16,31 +17,25 @@ const newData: ICreateDay = {
 
 export default function CreateDay() {
   const { params } = useRouter();
-  const [createDay, setCreateDay] = useState<ICreateDay>()
+  const [createDayData, setCreateDayData] = useState<ICreateDay>()
 
   useEffect(() => {
     if (!params.data) {
         return;
     }
     const data = JSON.parse(decodeURIComponent(params.data)) as ICreateDay;
-    console.log(data)
-    setCreateDay(data)
+    setCreateDayData(data)
 }, [params.data])
 
   const create = useCallback(async (data:ICreateDay) => {
-    console.log(data);
     try {
       Taro.showLoading({
         title: '创建中',
       })
       const now = new Date();
-      await Taro.cloud.callFunction({
-        name: 'createDay',
-        data: {
-          ...data,
-          createTime: now,
-          modifyTime: now,
-        },
+      await createDayService({
+        ...data,
+        createTime: now,
       })
       Taro.hideLoading();
       Taro.showToast({
@@ -50,7 +45,7 @@ export default function CreateDay() {
       })
       setTimeout(() => {
         Taro.hideToast();
-        if (!createDay) {
+        if (!createDayData) {
           Taro.navigateBack()
           return;
         }
@@ -59,24 +54,28 @@ export default function CreateDay() {
         })
       }, 2000)
     } catch(error) {
-      console.log(error)
+      Taro.hideLoading();
+      Taro.showToast({
+        title: '创建失败',
+        icon: 'none'
+      })
     }
-  }, [JSON.stringify(createDay)]);
+  }, [JSON.stringify(createDayData)]);
 
   const onCancel = useCallback(() => {
-    if (!createDay) {
+    if (!createDayData) {
       Taro.navigateBack()
       return;
     }
     Taro.redirectTo({
       url: '/pages/index/index'
     })
-  }, [JSON.stringify(createDay)])
+  }, [JSON.stringify(createDayData)])
 
   return (
     <EditDay
       type={EDayType.CREATE}
-      data={createDay || newData}
+      data={createDayData || newData}
       onClick={create}
       onCancel={onCancel}
     />

@@ -34,22 +34,18 @@ export default function Detail(props) {
             return;
         }
         const data = JSON.parse(decodeURIComponent(params.data)) as IDayCard;
-        console.log(data)
         setShowDay(data)
     }, [params.data])
 
     useEffect(() => {
-        console.log(showDay)
         if (!showDay) {
             return;
         }
         if (displayMode === EDisplayType.YEAR_MONTH_DAY) {
             const date = dayjs(showDay.day);
             const now = dayjs();
-            console.log(now, date)
             const diff = (dayjs as any).preciseDiff(now, date, true);
             const { years, months, days } = diff
-            console.log(diff)
             setFullDay({
                 years,
                 months,
@@ -79,7 +75,6 @@ export default function Detail(props) {
     })
 
     const setMode = () => {
-        console.log(showDay)
         if (!showDay || showDay.isRepeat || showDay.exactDay === TODAY || showDay.unit === EDayUnit.HOUR) {
             return;
         }

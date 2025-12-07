@@ -3,7 +3,7 @@ import Taro, { Config, useDidShow, usePullDownRefresh, useReady, useShareAppMess
 import { View, Text, Button, ScrollView, Image } from '@tarojs/components'
 import './index.scss'
 import { EDayTag, EDayUnit, IDay, IDayCard, IDayCardList, IDayList } from '../../../types/type';
-import {useCloudFunction} from '../../hooks/useCloudFunction'
+import { getDayList, setTopDay, deleteDay } from '../../services';
 import Icon from '../../components/common/icon/index.weapp';
 import dayjs from 'dayjs'
 
@@ -19,116 +19,109 @@ export default function Index() {
   const [show, setShow] = useState<boolean>(false);
   const [list, setList] = useState<IDayCardList>([]);
   const [top, setTop] = useState<IDayCard>();
+  const [loading, setLoading] = useState<boolean>(false);
 
   const selectedCard = useRef<IDayCard>()
-  const [loading, fetch, result] = useCloudFunction<void, IDayList>('getDayList');
 
-  useEffect(() => {
-    console.log('loading', loading)
-    if (loading) {
-      Taro.showLoading({
-        title: '正在获取数据',
+  const processData = (result: any[]) => {
+      if (!result || !Array.isArray(result)) {
+          setList([]);
+          setTop(undefined);
+          return;
+      }
+
+      const cardList:IDayCardList = result.map((item) => {
+        const icon = getIcon(item.tag);
+        const backgroundColor = getBackground(item.tag);
+        const now = dayjs();
+        let day = dayjs(item.day);
+        let dayDesc;
+        let exactDay;
+        let unit = EDayUnit.DAY;
+        if (item.isRepeat) {
+          dayDesc = DAY_DESC_UNTIL;
+          // 重复 需要将年设置为当前年
+          day = day.year(now.year());
+          if (now.month() === day.month() && now.date() === day.date()) {
+            dayDesc = '';
+            exactDay = TODAY;
+          } else if (day.isBefore(now)){
+            day = day.add(1, 'year');
+            exactDay = Math.abs(now.diff(day, 'day'));
+          } else {
+            const temp = Math.abs(now.diff(day, 'day'));
+            if (!temp) {
+              unit = EDayUnit.HOUR;
+              exactDay = Math.abs(now.diff(day, 'hours'));
+            } else {
+              exactDay = temp;
+            }
+          }
+        } else {
+          if (now.isSame(day, 'day')) {
+            dayDesc = DAY_DESC_TODAY
+            exactDay = TODAY
+          } else {
+            const temp = Math.abs(now.diff(day, 'day'));
+            if (!temp) {
+              unit = EDayUnit.HOUR;
+              exactDay = Math.abs(now.diff(day, 'hours'))
+            } else {
+              exactDay = temp;
+            }
+            dayDesc = day.isBefore(now) ? DAY_DESC_SINCE : DAY_DESC_UNTIL;
+          }
+        }
+        
+        const week = `${WEEK[dayjs(item.day).day()]}`
+  
+        return {
+          ...item,
+          icon,
+          dayDesc,
+          week,
+          backgroundColor,
+          exactDay,
+          unit,
+        }
       })
-      return;
-    }
-    Taro.hideLoading();
-
-  }, [loading]);
-
-  useEffect(() => {
-    // 如果 result 为 undefined 或 null，说明还在加载，不处理
-    if (result === undefined || result === null) {
-      return;
-    }
-    
-    // 如果 result 是空数组，清空列表和置顶项
-    if (Array.isArray(result) && !result.length) {
-      setList([]);
-      setTop(undefined);
-      return;
-    }
-    
-    // 如果 result 不是数组，说明可能出错了，也清空
-    if (!Array.isArray(result)) {
-      setList([]);
-      setTop(undefined);
-      return;
-    }
-    console.log(result)
-
-    const cardList:IDayCardList = result.map((item) => {
-      const icon = getIcon(item.tag);
-      const backgroundColor = getBackground(item.tag);
-      const now = dayjs();
-      let day = dayjs(item.day);
-      let dayDesc;
-      let exactDay;
-      let unit = EDayUnit.DAY;
-      if (item.isRepeat) {
-        dayDesc = DAY_DESC_UNTIL;
-        // 重复 需要将年设置为当前年
-        day = day.year(now.year());
-        if (now.month() === day.month() && now.date() === day.date()) {
-          dayDesc = '';
-          exactDay = TODAY;
-        } else if (day.isBefore(now)){
-          day = day.add(1, 'year');
-          exactDay = Math.abs(now.diff(day, 'day'));
-        } else {
-          const temp = Math.abs(now.diff(day, 'day'));
-          if (!temp) {
-            unit = EDayUnit.HOUR;
-            exactDay = Math.abs(now.diff(day, 'hours'));
-          } else {
-            exactDay = temp;
-          }
-        }
+  
+      const topIndex = cardList.findIndex((date) => date.isTop);
+      let nowTop:IDayCard | undefined = undefined;
+      if (topIndex !== -1) {
+        nowTop = cardList.splice(topIndex, 1)[0];
+      }
+      const res = cardList.sort((a, b) => new Date(b.modifyTime).getTime() - new Date(a.modifyTime).getTime());
+  
+      if (nowTop) {
+        setTop(nowTop)
       } else {
-        if (now.isSame(day, 'day')) {
-          dayDesc = DAY_DESC_TODAY
-          exactDay = TODAY
-        } else {
-          const temp = Math.abs(now.diff(day, 'day'));
-          if (!temp) {
-            unit = EDayUnit.HOUR;
-            exactDay = Math.abs(now.diff(day, 'hours'))
-          } else {
-            exactDay = temp;
-          }
-          dayDesc = day.isBefore(now) ? DAY_DESC_SINCE : DAY_DESC_UNTIL;
-        }
+        setTop(cardList.splice(0, 1)[0]);
       }
-      
-      const week = `${WEEK[dayjs(item.day).day()]}`
+  
+      setList(res);
+  }
 
-      return {
-        ...item,
-        icon,
-        dayDesc,
-        week,
-        backgroundColor,
-        exactDay,
-        unit,
-      }
-    })
-    console.log('cardlist', cardList)
-
-    const topIndex = cardList.findIndex((date) => date.isTop);
-    let nowTop:IDayCard | undefined = undefined;
-    if (topIndex !== -1) {
-      nowTop = cardList.splice(topIndex, 1)[0];
+  const fetch = async () => {
+    try {
+        setLoading(true);
+        Taro.showLoading({
+            title: '正在获取数据',
+        });
+        const result = await getDayList();
+        processData(result);
+    } catch (e) {
+        console.error('获取列表失败', e);
+        Taro.showToast({
+            title: '获取列表失败',
+            icon: 'none'
+        });
+    } finally {
+        setLoading(false);
+        Taro.hideLoading();
+        Taro.stopPullDownRefresh();
     }
-    const res = cardList.sort((a, b) => new Date(b.modifyTime).getTime() - new Date(a.modifyTime).getTime());
-
-    if (nowTop) {
-      setTop(nowTop)
-    } else {
-      setTop(cardList.splice(0, 1)[0]);
-    }
-
-    setList(res);
-    console.log(res)
-  }, [result])
+  };
 
   const onIconClick = (e:Event, item:IDayCard) => {
     e.stopPropagation();
@@ -137,7 +130,6 @@ export default function Index() {
   }
 
   const onCardClick = (item:IDayCard) => {
-    console.log(item, JSON.stringify(item))
     Taro.navigateTo({
       url: `/pages/detail/index?data=${encodeURIComponent(JSON.stringify(item))}`
     })
@@ -160,27 +152,25 @@ export default function Index() {
     Taro.showLoading({
       title: isTop ? '正在置顶中' : '正在取消置顶'
     })
-    console.log('isTop', isTop)
-    await Taro.cloud.callFunction({
-      name: 'setTopDay',
-      data: {
-        _id: selectedCard.current._id,
-        top: isTop,
-      }
-    })
-    Taro.hideLoading();
-    fetch();
+    
+    try {
+        await setTopDay(selectedCard.current._id, isTop);
+        fetch();
+    } catch (e) {
+        console.error('置顶操作失败', e);
+        Taro.showToast({
+            title: '操作失败',
+            icon: 'none'
+        });
+    } finally {
+        Taro.hideLoading();
+    }
   }
 
   const onDeleteClick = async () => {
     Taro.showModal({
-      content: `确定要删除 “${selectedCard.current?.title}” 吗？`,
+      content: `确定要删除 "${selectedCard.current?.title}" 吗？`,
       success: function (res) {
-        if (res.confirm) {
-          console.log('用户点击确定')
-        } else if (res.cancel) {
-          console.log('用户点击取消')
-        }
       }
     }).then(async (res) => {
       if (res.confirm) {
@@ -190,14 +180,19 @@ export default function Index() {
         Taro.showLoading({
           title: '正在删除中'
         })
-        await Taro.cloud.callFunction({
-          name: 'deleteDay',
-          data: {
-            _id: selectedCard.current._id,
-          }
-        })
-        Taro.hideLoading();
-        fetch();
+        
+        try {
+            await deleteDay(selectedCard.current._id);
+            fetch();
+        } catch (e) {
+            console.error('删除失败', e);
+            Taro.showToast({
+                title: '删除失败',
+                icon: 'none'
+            });
+        } finally {
+            Taro.hideLoading();
+        }
       }
     })
   }
@@ -208,7 +203,6 @@ export default function Index() {
 
   usePullDownRefresh(async () => {
     await fetch();
-    Taro.stopPullDownRefresh();
   })
 
   useDidShow(() => {

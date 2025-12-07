@@ -36,7 +36,6 @@ const ICON_GROUP = [
 
 export default function EditDay(props:Props) {
   const {type, data, onClick} = props;
-  console.log(data)
   const [editData, setEditData] = useState<ICreateDay>(data);
   const [buttonColor, setButtonColor] = useState<string>();
 
@@ -52,7 +51,6 @@ export default function EditDay(props:Props) {
   }, [tag])
 
   const onChange = (name, event, value?) => {
-    console.log('enter', name, value);
     if (name === 'day') {
       setEditData({
         ...editData,
@@ -75,7 +73,6 @@ export default function EditDay(props:Props) {
       })
       return;
     }
-    console.log(editData);
     onClick(editData);
   }, [title, editData])
 

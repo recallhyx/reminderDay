@@ -11,6 +11,5 @@ export default {
     navigationBarTitleText: '记记日子',
     navigationBarTextStyle: 'black'
   },
-  cloud: true,
   subPackages: []
 }

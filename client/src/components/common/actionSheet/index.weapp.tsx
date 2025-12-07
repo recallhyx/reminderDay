@@ -18,7 +18,6 @@ export default function CustomActionSheet(props: Props) {
     const [animation, setAnimation] = useState<string>();
 
     useEffect(() => {
-        console.log('action show', props.actionShow)
         setShow(props.actionShow)
         setAnimation(props.actionShow === true ? 'show-action-sheet' : 'hide-action-sheet')
         setMaskAnimation(props.actionShow === true ? 'show-mask-animation': 'hide-mask-animation')
